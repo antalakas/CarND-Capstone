@@ -31,7 +31,12 @@ class PID(object):
         elif val < self.min:
             val = self.min
         else:
-            self.int_val = integral
+			self.int_val = integral
+		
+        #if self.last_error >= 0 and error <= 0:
+        #    self.int_val = 0
+        #if self.last_error <=0 and error >= 0:
+        #    self.int_val = 0
         self.last_error = error
 
         return val
