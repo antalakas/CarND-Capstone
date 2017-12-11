@@ -96,6 +96,8 @@ class WaypointUpdater(object):
         self.cur_pos = msg.pose
         self.cur_pos_stamp = msg.header.stamp
         # TODO: Implement
+        rospy.loginfo("Car pos: %s", self.cur_pos)
+	
         pass
 
     def next_waypoint( self, cur, n ):
@@ -163,6 +165,7 @@ class WaypointUpdater(object):
             index = (index + 1) % self.n_base_wp
             #rospy.loginfo(index)
 			
+        rospy.loginfo("publishing final waypoints")
         self.final_waypoints_pub.publish(msg)
 
     def waypoints_cb(self, waypoints):
