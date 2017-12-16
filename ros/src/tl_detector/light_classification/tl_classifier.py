@@ -8,6 +8,7 @@ class TLClassifier(object):
     def __init__(self):
         #TODO load classifier
         self.sess=tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.25)))
+	#changed
 	file_path = os.path.dirname(os.path.abspath(__file__))
         self.saver=tf.train.import_meta_graph(file_path + '/lenet.meta')
         self.saver.restore(self.sess, tf.train.latest_checkpoint(file_path + '/'))
