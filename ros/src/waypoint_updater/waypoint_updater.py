@@ -109,6 +109,8 @@ class WaypointUpdater(object):
         self.cur_pos = msg.pose
         self.cur_pos_stamp = msg.header.stamp
         # TODO: Implement
+        rospy.loginfo("Car pos: %s", self.cur_pos)
+	
         pass
         
     def velocity_cb(self,msg):
@@ -232,6 +234,8 @@ class WaypointUpdater(object):
         #rospy.loginfo(msg.waypoints[0].twist.twist.linear.x)
         #rospy.loginfo(self.cur_lin_vel)
 		
+			
+        rospy.loginfo("publishing final waypoints")
         self.final_waypoints_pub.publish(msg)
 
     def waypoints_cb(self, waypoints):
