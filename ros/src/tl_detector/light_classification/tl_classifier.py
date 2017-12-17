@@ -2,13 +2,15 @@ from styx_msgs.msg import TrafficLight
 import glob
 import tensorflow as tf
 import numpy as np
+import os
 
 class TLClassifier(object):
     def __init__(self):
         #TODO load classifier
         self.sess=tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.25)))
-        self.saver=tf.train.import_meta_graph('/home/mpiscil/CarND-Capstone/ros/src/tl_detector/light_classification/lenet.meta')
-        self.saver.restore(self.sess, tf.train.latest_checkpoint('/home/mpiscil/CarND-Capstone/ros/src/tl_detector/light_classification/'))
+        here = os.path.dirname(__file__)
+        self.saver=tf.train.import_meta_graph(os.path.join(here, 'lenet.meta'))
+        self.saver.restore(self.sess, tf.train.latest_checkpoint(here))
 
         self.graph = tf.get_default_graph()
         self.x = self.graph.get_tensor_by_name("input_image:0")
