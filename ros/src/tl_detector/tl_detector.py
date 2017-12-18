@@ -51,7 +51,7 @@ class TLDetector(object):
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
-        
+
         self.red_im_count = 334
         self.green_im_count = 409
         self.unknown_im_count = 318
@@ -122,12 +122,12 @@ class TLDetector(object):
 			x = self.waypoints.waypoints[0].pose.pose.position.x
 			y = self.waypoints.waypoints[0].pose.pose.position.y
 			mindist = (x_val - x) ** 2 + (y_val - y) ** 2
-			
+
 			for i in range(1, len(self.waypoints.waypoints)):
 				x = self.waypoints.waypoints[i].pose.pose.position.x
 				y = self.waypoints.waypoints[i].pose.pose.position.y
-				
-				dist = (x_val - x) ** 2 + (y_val - y) ** 2            
+
+				dist = (x_val - x) ** 2 + (y_val - y) ** 2
 				if (dist < mindist):
 					mindist = dist
 					x = x
@@ -137,7 +137,7 @@ class TLDetector(object):
             rospy.loginfo("waypoints is None!")
             #rospy.loginfo(self.waypoints)
         return counter
-        
+
     def get_light_state(self, true_light):
         """Determines the current color of the traffic light
 
@@ -193,7 +193,7 @@ class TLDetector(object):
                 min_value = self.lights[counter].state
                 minnum = counter
         return min_value
-        
+
     def save_image(self,dist_to_tl,stop_pos_x,stop_pos_y):
 		state = self.get_simulator_state([stop_pos_x,stop_pos_y])
 		if dist_to_tl > 50 or dist_to_tl < 0:
@@ -224,14 +224,14 @@ class TLDetector(object):
 			stop_line_positions = self.config['stop_line_positions']
 			if(self.pose):
 				car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
-			
+
 			vx = self.waypoints.waypoints[(car_position+1)%len(self.waypoints.waypoints)].pose.pose.position.x - self.waypoints.waypoints[car_position].pose.pose.position.x
 			vy = self.waypoints.waypoints[(car_position+1)%len(self.waypoints.waypoints)].pose.pose.position.y - self.waypoints.waypoints[car_position].pose.pose.position.y
 			norm_v = np.sqrt( vx*vx + vy*vy )
 			vx /= norm_v
 			vy /= norm_v
 			#rospy.loginfo("Vx = %s",[vx,vy])
-			
+
 			#print(car_position)
 			car_x = self.waypoints.waypoints[car_position].pose.pose.position.x
 			car_y = self.waypoints.waypoints[car_position].pose.pose.position.y
