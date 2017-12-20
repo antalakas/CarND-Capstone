@@ -6,12 +6,13 @@ import numpy as np
 class TLClassifier(object):
     def __init__(self):
         #TODO load classifier
-        self.sess=tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.25)))
+        self.sess=tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.5)))
+        #self.sess=tf.Session()
         self.saver=tf.train.import_meta_graph('/home/mpiscil/CarND-Capstone/ros/src/tl_detector/light_classification/lenet.meta')
         self.saver.restore(self.sess, tf.train.latest_checkpoint('/home/mpiscil/CarND-Capstone/ros/src/tl_detector/light_classification/'))
 
         self.graph = tf.get_default_graph()
-        self.x = self.graph.get_tensor_by_name("input_image:0")
+        self.x = self.graph.get_tensor_by_name("input_image_new:0")
         self.keep_prob = self.graph.get_tensor_by_name("keep_prob:0")
         self.output_value = self.graph.get_tensor_by_name("output:0")
 
@@ -34,4 +35,6 @@ class TLClassifier(object):
             return TrafficLight.RED
         elif predictions == 2:
             return TrafficLight.GREEN
+        elif predictions == 1:
+			return TrafficLight.YELLOW
         return TrafficLight.UNKNOWN

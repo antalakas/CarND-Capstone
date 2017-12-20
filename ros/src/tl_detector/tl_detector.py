@@ -52,9 +52,10 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
         
-        self.red_im_count = 334
-        self.green_im_count = 409
-        self.unknown_im_count = 318
+        self.red_im_count = 5000
+        self.green_im_count = 5000
+        self.yellow_im_count = 5000
+        self.unknown_im_count = 5000
 
         rospy.spin()
 
@@ -138,7 +139,7 @@ class TLDetector(object):
             #rospy.loginfo(self.waypoints)
         return counter
         
-    def get_light_state(self, true_light):
+    def get_light_state(self, true_light, dist_to_tl):
         """Determines the current color of the traffic light
 
         Args:
@@ -153,25 +154,42 @@ class TLDetector(object):
             return False
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
-        if False:
-            rospy.loginfo("%s",cv_image.shape)
-            rospy.loginfo("%s",true_light)
-            if true_light == 0:
-                filename = "/home/mpiscil/CarND-Capstone/our_dataset/" + str(true_light) + "_" + str(self.red_im_count) + ".png"
+        
+        TL_return_value = self.light_classifier.get_classification(cv_image)
+        if TL_return_value == TrafficLight.UNKNOWN:
+			TL_return_value == 3
+        rospy.logwarn("Predict: %s, True: %s", TL_return_value, true_light)        
+        
+        if False and TL_return_value != true_light:
+            if true_light == 0 and (uniform(0,1) < 0.5) and (dist_to_tl > 100 or dist_to_tl < -1):
+                rospy.loginfo("%s",cv_image.shape)
+                rospy.loginfo("%s",true_light)
+                filename = "/home/mpiscil/CarND-Capstone/our_dataset/red/" + str(true_light) + "_" + str(self.red_im_count) + ".png"
                 cv2.imwrite(filename,cv_image)
                 self.red_im_count += 1
-            elif true_light == 2:
-                filename = "/home/mpiscil/CarND-Capstone/our_dataset/" + str(true_light) + "_" + str(self.green_im_count) + ".png"
+            elif true_light == 2 and (uniform(0,1) < 0.5) and (dist_to_tl > 100 or dist_to_tl < -1):
+                rospy.loginfo("%s",cv_image.shape)
+                rospy.loginfo("%s",true_light)
+                filename = "/home/mpiscil/CarND-Capstone/our_dataset/green/" + str(true_light) + "_" + str(self.green_im_count) + ".png"
                 cv2.imwrite(filename,cv_image)
                 self.green_im_count += 1
-            else:
-                filename = "/home/mpiscil/CarND-Capstone/our_dataset/" + str(1) + "_" + str(self.unknown_im_count) + ".png"
+            elif true_light == 1 and (uniform(0,1) < 0.5) and (dist_to_tl > 100 or dist_to_tl < -1):
+                rospy.loginfo("%s",cv_image.shape)
+                rospy.loginfo("%s",true_light)
+                filename = "/home/mpiscil/CarND-Capstone/our_dataset/yellow/" + str(true_light) + "_" + str(self.yellow_im_count) + ".png"
+                cv2.imwrite(filename,cv_image)
+                self.yellow_im_count += 1
+            elif true_light == 3 and (uniform(0,1) < 0.01):
+                rospy.loginfo("%s",cv_image.shape)
+                rospy.loginfo("%s",true_light)
+                filename = "/home/mpiscil/CarND-Capstone/our_dataset/unknown/" + str(true_light) + "_" + str(self.unknown_im_count) + ".png"
                 cv2.imwrite(filename,cv_image)
                 self.unknown_im_count += 1
 
         #Get classification
-        TL_return_value = self.light_classifier.get_classification(cv_image)
-        rospy.logwarn("Predict: %s, True: %s", TL_return_value, true_light)
+        
+        #TL_return_value = 2
+        
         return TL_return_value
 
     def get_simulator_state(self,stop_pos):
@@ -196,16 +214,19 @@ class TLDetector(object):
         
     def save_image(self,dist_to_tl,stop_pos_x,stop_pos_y):
 		state = self.get_simulator_state([stop_pos_x,stop_pos_y])
-		if dist_to_tl > 50 or dist_to_tl < 0:
-			if(uniform(0,1) < 0.01):
+		state_temp = self.get_light_state(state)
+		if dist_to_tl > 100 or dist_to_tl < -2:
+			if(uniform(0,1) < 0.02):
 				state_temp = self.get_light_state(1)
-		if((state == 0 or state == 2) and dist_to_tl < 50 and dist_to_tl > 0):
+		if((state == 0 or state == 2) and dist_to_tl < 100 and dist_to_tl > -2):
 			if state == 0:
 				if(uniform(0,1) < 0.1):
 					state_temp = self.get_light_state(state)
-			else:
+			elif state == 2:
 				if(uniform(0,1) < 0.3):
 					state_temp = self.get_light_state(state)
+			else:
+				state_temp = self.get_light_state(state)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -272,7 +293,7 @@ class TLDetector(object):
 			#if light:
 			if dot > 0:
 				true_state = self.get_simulator_state([stop_pos_x,stop_pos_y])
-				state = self.get_light_state(true_state)
+				state = self.get_light_state(true_state,dist_to_tl)
 				#state = true_state
 				
 				#print(light_wp, state)

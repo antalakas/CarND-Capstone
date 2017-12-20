@@ -68,7 +68,7 @@ class DBWNode(object):
 		rospy.Subscriber('/twist_cmd',TwistStamped,self.twist_smd_cb)
 		rospy.Subscriber('/current_velocity',TwistStamped,self.cur_velocity_cb)
 		
-		#rospy.loginfo("DBW initialized!")
+		rospy.loginfo("DBW initialized!")
 
 		self.loop()
 
