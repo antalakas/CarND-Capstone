@@ -23,9 +23,9 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
-BRAKE_DIST = 50
+BRAKE_DIST = 80
 MIN_BRAKE_DIST = 20
-BRAKE_VELOCITY_MULT = 0.9
+BRAKE_VELOCITY_MULT = 0.8
 TL_GAP = 8.0
 MIN_VELOCITY = 0.25
 
@@ -116,6 +116,7 @@ class WaypointUpdater(object):
     def velocity_cb(self,msg):
         self.cur_lin_vel = msg.twist.linear.x
         self.cur_ang_vel = msg.twist.angular.z
+        #rospy.loginfo("Current velocity is: %s",self.cur_lin_vel)
 
     def getNextWp(self):
 		counter = 0
@@ -191,14 +192,13 @@ class WaypointUpdater(object):
             wp.pose.pose.position.x = self.base_wp[index].pose.pose.position.x
             wp.pose.pose.position.y = self.base_wp[index].pose.pose.position.y
             max_spd = self.speed_limit
+            max_spd = self.base_wp[index].twist.twist.linear.x
             
             tf_x = self.base_wp[self.red_wp].pose.pose.position.x
             tl_y = self.base_wp[self.red_wp].pose.pose.position.y
             
             wp_x = self.base_wp[index].pose.pose.position.x
-            wp_y = self.base_wp[index].pose.pose.position.y
-            
-            
+            wp_y = self.base_wp[index].pose.pose.position.y            
             
             #rospy.loginfo(self.red_wp - index)
             if(self.red_wp + self.n_base_wp > index) and self.red_wp > 0:
@@ -242,6 +242,10 @@ class WaypointUpdater(object):
         self.base_wp = waypoints.waypoints
         self.n_base_wp = len(self.base_wp)
         self.has_wp = True;
+        #for index in range(self.n_base_wp):
+        #    max_spd = self.base_wp[index].twist.twist.linear.x
+        #    rospy.logwarn(max_spd)
+        #    rospy.logwarn(index)
         #rospy.loginfo("W_U waypoints loaded!")
         # TODO: Implement
         pass

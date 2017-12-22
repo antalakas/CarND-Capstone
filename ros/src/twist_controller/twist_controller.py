@@ -17,7 +17,7 @@ class Controller(object):
         self.wheel_radius = wheel_radius
         self.accel_limit = accel_limit
         self.decel_limit = decel_limit
-        self.pid_controller = PID(0.20,0.055,0.01,-1,0.5)
+        self.pid_controller = PID(0.4,0.02,0.002,-1,0.30)
         self.yaw_controller = YawController(wheel_base,steer_ratio,0.1,max_lat_accel,max_steer_angle)
         self.steer_filter = LowPassFilter(0.0,1.0)
         self.dbw_enabled = False

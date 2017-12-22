@@ -13,7 +13,7 @@ class TLClassifier(object):
         self.saver.restore(self.sess, os.path.join(data_dir, "model.ckpt"))
 
         self.graph = tf.get_default_graph()
-        self.x = self.graph.get_tensor_by_name("input_image:0")
+        self.x = self.graph.get_tensor_by_name("input_image_new:0")
         self.keep_prob = self.graph.get_tensor_by_name("keep_prob:0")
         self.output_value = self.graph.get_tensor_by_name("output:0")
 
@@ -36,4 +36,6 @@ class TLClassifier(object):
             return TrafficLight.RED
         elif predictions == 2:
             return TrafficLight.GREEN
+        elif predictions == 1:
+			return TrafficLight.YELLOW
         return TrafficLight.UNKNOWN
