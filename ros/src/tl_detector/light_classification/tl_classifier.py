@@ -9,8 +9,8 @@ class TLClassifier(object):
         #TODO load classifier
         self.sess=tf.Session(config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.25)))
         data_dir = os.path.join(os.path.dirname(__file__), "data")
-        self.saver = tf.train.import_meta_graph(os.path.join(data_dir, 'model.ckpt.meta'))
-        self.saver.restore(self.sess, os.path.join(data_dir, "model.ckpt"))
+        self.saver = tf.train.import_meta_graph(os.path.join(data_dir, 'model.meta'))
+        self.saver.restore(self.sess, os.path.join(data_dir, "model"))
 
         self.graph = tf.get_default_graph()
         self.x = self.graph.get_tensor_by_name("input_image_new:0")
